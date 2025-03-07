@@ -54,3 +54,7 @@ echo "geoip.dat和geosite.dat更新完成，版本: $RULES_LATEST"
 # 启动Xray服务并检查状态
 service xray start
 service xray status
+
+# 在服务状态输出后显示版本信息
+echo "Xray-core 最新版本: $XRAY_LATEST"
+echo "GeoIP 和 GeoSite 数据文件 最新版本: $RULES_LATEST"
