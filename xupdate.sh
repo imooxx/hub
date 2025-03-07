@@ -51,14 +51,13 @@ curl -L -o "${XRAY_DIR}/geosite.dat" "$GEOSITE_URL"
 
 echo "geoip.dat和geosite.dat更新完成，版本: $RULES_LATEST"
 
-# 启动Xray服务
+# 启动Xray服务并检查状态
 service xray start
 
 # 等待5秒钟
 echo "等待5秒钟..."
 sleep 5
 
-# 检查Xray服务状态
 service xray status
 
 # 在服务状态输出后显示版本信息
