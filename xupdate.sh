@@ -18,6 +18,10 @@ echo "目录 $XRAY_DIR 存在，继续执行更新..."
 # 停止Xray服务
 service xray stop
 
+# 等待3秒钟
+echo "等待3秒钟..."
+sleep 3
+
 echo "已停止Xray服务，开始检查Xray-core更新..."
 
 # 获取Xray-core最新版本号及是否为Pre-release
@@ -39,6 +43,10 @@ else
     echo "Xray-core更新完成，版本: $XRAY_LATEST"
 fi
 
+# 等待3秒钟
+echo "等待3秒钟..."
+sleep 3
+
 # 更新geoip.dat 和 geosite.dat
 echo "开始更新geoip.dat和geosite.dat..."
 
@@ -51,15 +59,16 @@ curl -L -o "${XRAY_DIR}/geosite.dat" "$GEOSITE_URL"
 
 echo "geoip.dat和geosite.dat更新完成，版本: $RULES_LATEST"
 
-# 启动Xray服务并检查状态
-service xray start
-
-# 等待5秒钟
-echo "等待5秒钟..."
-sleep 5
-
-service xray status
 
 # 在服务状态输出后显示版本信息
 echo "Xray-core 最新版本: $XRAY_LATEST"
 echo "GeoIP 和 GeoSite 数据文件 最新版本: $RULES_LATEST"
+
+# 启动Xray服务并检查状态
+service xray start
+
+# 等待3秒钟
+echo "等待3秒钟..."
+sleep 3
+
+service xray status
