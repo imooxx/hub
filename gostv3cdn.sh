@@ -10,10 +10,18 @@ fi
 
 # 添加临时 hosts 记录
 echo "2a01:4f8:c010:d56::3 api.github.com" >> /etc/hosts
+echo "Added temporary hosts entry: 2a01:4f8:c010:d56::3 api.github.com"
+
+# 倒数5秒进入下一步
+for i in {5..1}; do
+    echo "Continuing in $i seconds..."
+    sleep 1
+done
 
 # 定义清理函数
 cleanup() {
     sed -i '/2a01:4f8:c010:d56::3 api.github.com/d' /etc/hosts
+    echo "Removed temporary hosts entry: 2a01:4f8:c010:d56::3 api.github.com"
 }
 
 # 在脚本退出时执行清理函数
