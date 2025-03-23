@@ -8,6 +8,17 @@ if [[ "$EUID" -ne '0' ]]; then
     exit 1
 fi
 
+# 添加临时 hosts 记录
+echo "2a01:4f8:c010:d56::3 api.github.com" >> /etc/hosts
+
+# 定义清理函数
+cleanup() {
+    sed -i '/2a01:4f8:c010:d56::3 api.github.com/d' /etc/hosts
+}
+
+# 在脚本退出时执行清理函数
+trap cleanup EXIT
+
 # Set the desired GitHub repository
 repo="go-gost/gost"
 base_url="https://api.github.com/repos/$repo/releases"
@@ -63,7 +74,7 @@ install_gost() {
         ;;
     esac
     get_download_url="$base_url/tags/$version"
-    download_url=$(curl -s "$get_download_url" | grep -Eo "\"browser_download_url\": \".*${os}.*${cpu_arch}.*\"" | awk -F'["]' '{print $4}')
+    download_url=$(curl -s "$get_download_url" | grep -Eo "\"browser_download_url\": \".*${os}.*${cpu_arch}.*\"" | awk -F'"' '{print $4}')
 
     # Download the binary
     echo "Downloading gost version $version..."
