@@ -10,8 +10,7 @@ fi
 
 # Set the desired GitHub repository
 repo="go-gost/gost"
-# base_url="https://api.github.com/repos/$repo/releases"
-base_url="https://gh-proxy.com/api.github.com/repos/$repo/releases"
+base_url="https://api.github.com/repos/$repo/releases"
 
 # Function to download and install gost
 install_gost() {
