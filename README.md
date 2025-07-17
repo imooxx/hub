@@ -12,3 +12,8 @@
 bash <(curl -L -s https://raw.githubusercontent.com/imooxx/hub/refs/heads/main/gostv3cdn.sh)
 bash <(curl -L -s https://cdn.jsdelivr.net/gh/imooxx/hub@master/gostv3cdn.sh)
 ```
+
+### Rsust_manage.sh
+```
+wget -O /root/rsust_manage.sh "https://raw.githubusercontent.com/imooxx/hub/refs/heads/main/rsust_manage.sh" && chmod +x /root/rsust_manage.sh && ln -sf /root/rsust_manage.sh /usr/local/bin/rsust && rsust
+```
