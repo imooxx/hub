@@ -1,9 +1,64 @@
 #!/usr/bin/env bash
 # File: gostpf.sh
-# 功能：交互式部署 GOST v3 端口转发服务并配置 systemd 自启
+# 功能：交互式部署或卸载 GOST v3 端口转发服务
 
 set -e
 
+SERVICE_NAME="gost.service"
+SYSTEMD_FILE="/etc/systemd/system/${SERVICE_NAME}"
+CONFIG_DIR="/etc/gost"
+CONFIG_FILE="${CONFIG_DIR}/config.yaml"
+GOST_BIN="/usr/local/bin/gost"
+
+# ========== 提供功能选择 ==========
+echo "====== GOST v3 转发服务工具 ======"
+echo "1) 安装并配置 GOST"
+echo "2) 卸载并清理 GOST"
+read -p "请选择操作 [1/2]（默认 1）: " CHOICE
+CHOICE=${CHOICE:-1}
+
+# ========== 卸载模式 ==========
+if [[ "$CHOICE" == "2" ]]; then
+  echo "⚠️ 即将卸载 GOST 配置和服务..."
+
+  # 停止并禁用服务
+  if systemctl list-units --full -all | grep -q "${SERVICE_NAME}"; then
+    systemctl stop "${SERVICE_NAME}" || true
+    systemctl disable "${SERVICE_NAME}" || true
+    echo "✅ 已停止并禁用 systemd 服务"
+  fi
+
+  # 删除 systemd 文件
+  if [[ -f "$SYSTEMD_FILE" ]]; then
+    rm -f "$SYSTEMD_FILE"
+    echo "🗑️ 已删除 systemd 文件: $SYSTEMD_FILE"
+  fi
+
+  # 删除配置文件和目录
+  if [[ -f "$CONFIG_FILE" ]]; then
+    rm -f "$CONFIG_FILE"
+    echo "🗑️ 已删除配置文件: $CONFIG_FILE"
+  fi
+  if [[ -d "$CONFIG_DIR" ]]; then
+    rmdir --ignore-fail-on-non-empty "$CONFIG_DIR" 2>/dev/null || true
+  fi
+
+  # 删除 gost 可执行文件（可选）
+  if [[ -f "$GOST_BIN" ]]; then
+    read -p "是否同时删除 gost 主程序（$GOST_BIN）？[y/N]: " DEL_BIN
+    if [[ "$DEL_BIN" == "y" || "$DEL_BIN" == "Y" ]]; then
+      rm -f "$GOST_BIN"
+      echo "🗑️ 已删除 gost 主程序"
+    fi
+  fi
+
+  # 清除缓存并提示
+  systemctl daemon-reload
+  echo "✅ GOST 卸载清理完成。"
+  exit 0
+fi
+
+# ========== 安装模式 ==========
 echo "====== GOST v3 转发服务配置 ======"
 
 # 输入监听端口，默认 10800
@@ -26,7 +81,6 @@ echo "👉 开始安装 gost..."
 bash <(curl -fsSL https://github.com/go-gost/gost/raw/master/install.sh)
 
 # 自动检测 gost 是否安装成功
-GOST_BIN="/usr/local/bin/gost"
 if [[ -x "${GOST_BIN}" ]]; then
   echo "✅ 经检测，${GOST_BIN} 已存在，gost 安装成功。"
 else
@@ -37,12 +91,6 @@ else
     exit 1
   fi
 fi
-
-# 设置路径与文件
-CONFIG_DIR="/etc/gost"
-CONFIG_FILE="${CONFIG_DIR}/config.yaml"
-SERVICE_NAME="gost.service"
-SYSTEMD_FILE="/etc/systemd/system/${SERVICE_NAME}"
 
 # 创建配置目录
 mkdir -p "${CONFIG_DIR}"
@@ -82,12 +130,12 @@ User=root
 WantedBy=multi-user.target
 EOF
 
-# 启动服务
+# 启用并启动服务
 systemctl daemon-reload
 systemctl enable "${SERVICE_NAME}"
 systemctl restart "${SERVICE_NAME}"
 
-# 提示
+# 提示信息
 echo
 echo "🎉 GOST 已部署并运行"
 echo "监听端口: ${LISTEN_PORT}"
