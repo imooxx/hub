@@ -19,6 +19,6 @@ wget -O /root/rsust_manage.sh "https://raw.githubusercontent.com/imooxx/hub/refs
 ```
 
 ### GostPF.sh
-···
+```
 wget -O /root/gostpf.sh "https://raw.githubusercontent.com/imooxx/hub/refs/heads/main/gostpf.sh" && chmod +x /root/gostpf.sh && /root/gostpf.sh
-···
+```
