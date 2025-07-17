@@ -61,9 +61,9 @@ fi
 # ========== 安装模式 ==========
 echo "====== GOST v3 转发服务配置 ======"
 
-# 输入监听端口，默认 10800
-read -p "请输入本地监听端口（默认 10800）: " LISTEN_PORT
-LISTEN_PORT=${LISTEN_PORT:-10800}
+# 输入监听端口，默认 18080
+read -p "请输入本地监听端口（默认 18080）: " LISTEN_PORT
+LISTEN_PORT=${LISTEN_PORT:-18080}
 
 # 输入目标地址
 read -p "请输入目标转发地址（如 192.168.1.100:80）: " TARGET_ADDR
