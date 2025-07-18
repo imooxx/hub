@@ -69,7 +69,7 @@ if [[ "$CHOICE" == "1" ]]; then
   cat > "$CONFIG_FILE" <<EOF
 services:
 - name: ${FORWARD_NAME}
-  addr: ":${LISTEN_PORT}"
+  addr: :${LISTEN_PORT}
   handler:
     type: tcp
   listener:
@@ -77,7 +77,7 @@ services:
   forwarder:
     nodes:
     - name: ${NODE_NAME}
-      addr: ${TARGET_ADDR}
+      addr: "${TARGET_ADDR}"
 EOF
 
   echo "✅ 已写入配置文件：$CONFIG_FILE"
@@ -139,7 +139,7 @@ if [[ "$CHOICE" == "2" ]]; then
   cat >> "$CONFIG_FILE" <<EOF
 
 - name: ${FORWARD_NAME}
-  addr: ":${NEW_PORT}"
+  addr: :${NEW_PORT}
   handler:
     type: tcp
   listener:
@@ -147,7 +147,7 @@ if [[ "$CHOICE" == "2" ]]; then
   forwarder:
     nodes:
     - name: ${NODE_NAME}
-      addr: ${TARGET_ADDR}
+      addr: "${TARGET_ADDR}"
 EOF
 
   echo "✅ 已添加转发服务到配置文件"
