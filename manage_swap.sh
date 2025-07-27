@@ -49,7 +49,7 @@ function remove_swap {
 }
 
 # 主菜单
-echo "=== Debian 12 一键管理 Swap 脚本（单位：MiB） ==="
+echo "=== Debian 12一键管理Swap脚本（单位：MiB）==="
 show_info
 echo
 
