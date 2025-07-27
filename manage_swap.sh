@@ -6,58 +6,64 @@ ACTION=""
 SIZE_MB=""
 
 function show_info {
-  echo "当前 Swap 情况："
+  echo "Current swap status:"
   free -h
-  swapon --show
+  swapon --show || echo "No swap currently active."
 }
 
 function add_swap {
-  read -p "请输入要创建的 swap 大小（MiB，例如 512、2048）： " SIZE_MB
+  read -p "Enter swap size in MiB (e.g. 512, 2048): " SIZE_MB
 
   if ! [[ "$SIZE_MB" =~ ^[0-9]+$ ]]; then
-    echo "❌ 输入必须为正整数（单位：MiB）"
+    echo "Invalid input. Please enter a positive integer (in MiB)."
     exit 1
   fi
 
-  fallocate -l "${SIZE_MB}M" "${SWAPFILE}" || dd if=/dev/zero of="${SWAPFILE}" bs=1M count="${SIZE_MB}"
+  echo "Creating swapfile of ${SIZE_MB}MiB..."
+
+  fallocate -l "${SIZE_MB}M" "${SWAPFILE}" 2>/dev/null || dd if=/dev/zero of="${SWAPFILE}" bs=1M count="${SIZE_MB}" status=progress
+
   chmod 600 "${SWAPFILE}"
   mkswap "${SWAPFILE}"
   swapon "${SWAPFILE}"
-  echo "${SWAPFILE} swap swap defaults 0 0" >> /etc/fstab
 
-  echo "✅ 已创建并激活 ${SIZE_MB} MiB swap 文件：${SWAPFILE}"
+  if ! grep -q "${SWAPFILE}" /etc/fstab; then
+    echo "${SWAPFILE} swap swap defaults 0 0" >> /etc/fstab
+  fi
 
-  read -p "是否设置 vm.swappiness=10？(y/n) " yn
-  if [[ $yn =~ ^[Yy]$ ]]; then
-    echo "vm.swappiness=10" >> /etc/sysctl.d/99-swappiness.conf
+  echo "Swapfile created and enabled."
+
+  read -p "Set vm.swappiness to 10 for better performance? (y/n): " yn
+  if [[ "$yn" =~ ^[Yy]$ ]]; then
+    echo "vm.swappiness=10" > /etc/sysctl.d/99-swappiness.conf
     sysctl -p /etc/sysctl.d/99-swappiness.conf
-    echo "✅ 已设置 swappiness=10"
+    echo "Swappiness set to 10."
   fi
 }
 
 function remove_swap {
   if swapon --show | grep -q "${SWAPFILE}"; then
-    swapoff -v "${SWAPFILE}"
-    echo "✅ 已停用 swapfile"
+    swapoff "${SWAPFILE}"
+    echo "Swapfile deactivated."
   else
-    echo "⚠️  swapfile 当前未激活"
+    echo "Swapfile not active."
   fi
 
   sed -i "\|${SWAPFILE}|d" /etc/fstab
   rm -f "${SWAPFILE}"
-  echo "✅ /etc/fstab 中相关行已删除，swapfile 已删除"
+  echo "Swapfile removed and fstab cleaned."
 }
 
-# 主菜单
-echo "===Debian12一键管理Swap脚本（单位：MiB）==="
+# Main menu
+echo "=== Swap Manager for Debian 12 ==="
 show_info
 echo
 
-echo "请选择操作："
-echo "  1) 添加 Swap 文件"
-echo "  2) 删除 Swap 文件"
-echo "  0) 退出"
-read -p "输入数字选择： " ACTION
+echo "Choose an action:"
+echo "  1) Add swap"
+echo "  2) Remove swap"
+echo "  0) Exit"
+read -p "Enter your choice: " ACTION
 
 case "$ACTION" in
   1)
@@ -67,10 +73,10 @@ case "$ACTION" in
     remove_swap
     ;;
   0)
-    echo "退出。"
+    echo "Exiting."
     ;;
   *)
-    echo "❌ 无效选择。退出。"
+    echo "Invalid choice. Exiting."
     ;;
 esac
 
