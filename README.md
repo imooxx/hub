@@ -22,3 +22,7 @@ wget -O /root/rsust_manage.sh "https://raw.githubusercontent.com/imooxx/hub/refs
 ```
 wget -O /root/gostpf.sh "https://raw.githubusercontent.com/imooxx/hub/refs/heads/main/gostpf.sh" && chmod +x /root/gostpf.sh && /root/gostpf.sh
 ```
+### Manage_swap.sh
+```
+wget -O /root/manage_swap.sh "https://raw.githubusercontent.com/imooxx/hub/refs/heads/main/manage_swap.sh" && chmod +x /root/manage_swap.sh && /root/manage_swap.sh
+```
