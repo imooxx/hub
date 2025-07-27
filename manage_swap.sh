@@ -3,7 +3,7 @@ set -e
 
 SWAPFILE="/swapfile"
 ACTION=""
-SIZE_GB=""
+SIZE_MB=""
 
 function show_info {
   echo "当前 Swap 情况："
@@ -12,35 +12,44 @@ function show_info {
 }
 
 function add_swap {
-  read -p "请输入要创建的 swap 大小（GiB，例如 2）： " SIZE_GB
-  fallocate -l "${SIZE_GB}G" "${SWAPFILE}"
+  read -p "请输入要创建的 swap 大小（MiB，例如 512、2048）： " SIZE_MB
+
+  if ! [[ "$SIZE_MB" =~ ^[0-9]+$ ]]; then
+    echo "❌ 输入必须为正整数（单位：MiB）"
+    exit 1
+  fi
+
+  fallocate -l "${SIZE_MB}M" "${SWAPFILE}" || dd if=/dev/zero of="${SWAPFILE}" bs=1M count="${SIZE_MB}"
   chmod 600 "${SWAPFILE}"
   mkswap "${SWAPFILE}"
   swapon "${SWAPFILE}"
   echo "${SWAPFILE} swap swap defaults 0 0" >> /etc/fstab
-  echo "已创建并激活 ${SIZE_GB} GiB swap 文件：${SWAPFILE}"
+
+  echo "✅ 已创建并激活 ${SIZE_MB} MiB swap 文件：${SWAPFILE}"
+
   read -p "是否设置 vm.swappiness=10？(y/n) " yn
   if [[ $yn =~ ^[Yy]$ ]]; then
     echo "vm.swappiness=10" >> /etc/sysctl.d/99-swappiness.conf
     sysctl -p /etc/sysctl.d/99-swappiness.conf
-    echo "已设置 swappiness=10"
+    echo "✅ 已设置 swappiness=10"
   fi
 }
 
 function remove_swap {
   if swapon --show | grep -q "${SWAPFILE}"; then
     swapoff -v "${SWAPFILE}"
-    echo "已停用 swapfile"
+    echo "✅ 已停用 swapfile"
   else
-    echo "swapfile 当前未激活"
+    echo "⚠️  swapfile 当前未激活"
   fi
+
   sed -i "\|${SWAPFILE}|d" /etc/fstab
   rm -f "${SWAPFILE}"
-  echo "/etc/fstab 中相关行已删除，swapfile 已删除"
+  echo "✅ /etc/fstab 中相关行已删除，swapfile 已删除"
 }
 
 # 主菜单
-echo "=== Debian 12 一键管理 Swap 脚本 ==="
+echo "=== Debian 12 一键管理 Swap 脚本（单位：MiB） ==="
 show_info
 echo
 
@@ -61,7 +70,7 @@ case "$ACTION" in
     echo "退出。"
     ;;
   *)
-    echo "无效选择。退出。"
+    echo "❌ 无效选择。退出。"
     ;;
 esac
 
