@@ -29,5 +29,5 @@ wget -O /root/manage_swap.sh "https://raw.githubusercontent.com/imooxx/hub/refs/
 ### Latency.sh
 From:[https://github.com/Cd1s/network-latency-tester](https://github.com/Cd1s/network-latency-tester)
 ```
-wget -O /root/manage_swap.sh "https://raw.githubusercontent.com/imooxx/hub/refs/heads/main/latency.sh" && chmod +x /root/latency.sh && /root/latency.sh
+wget -O /root/latency.sh "https://raw.githubusercontent.com/imooxx/hub/refs/heads/main/latency.sh" && chmod +x /root/latency.sh && /root/latency.sh
 ```
