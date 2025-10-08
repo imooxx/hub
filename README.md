@@ -26,3 +26,8 @@ wget -O /root/gostpf.sh "https://raw.githubusercontent.com/imooxx/hub/refs/heads
 ```
 wget -O /root/manage_swap.sh "https://raw.githubusercontent.com/imooxx/hub/refs/heads/main/manage_swap.sh" && chmod +x /root/manage_swap.sh && /root/manage_swap.sh
 ```
+### Latency.sh
+From:[https://github.com/Cd1s/network-latency-tester](https://github.com/Cd1s/network-latency-tester)
+```
+wget -O /root/manage_swap.sh "https://raw.githubusercontent.com/imooxx/hub/refs/heads/main/latency.sh" && chmod +x /root/latency.sh && /root/latency.sh
+```
