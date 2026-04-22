@@ -92,11 +92,86 @@ check_service_health() {
     return 1
 }
 
+# 下载并安装 GOST 的新函数
+install_gost_from_github() {
+    echo "📥 获取最新 GOST 版本信息..."
+    
+    # 获取最新版本
+    local latest_version
+    latest_version=$(curl -fsSL https://api.github.com/repos/go-gost/gost/releases/latest 2>/dev/null | grep -oP '"tag_name": "\K(.*)(?=")' | head -1)
+    
+    if [[ -z "$latest_version" ]]; then
+        echo "❌ 无法获取 GOST 版本信息，请检查网络连接"
+        return 1
+    fi
+    
+    echo "✅ 获取到版本：$latest_version"
+    
+    # 检测系统和架构
+    local os arch
+    os="linux"
+    
+    case "$(uname -m)" in
+        x86_64|amd64)
+            arch="amd64"
+            ;;
+        armv7l|armv7)
+            arch="armv7"
+            ;;
+        aarch64|arm64)
+            arch="arm64"
+            ;;
+        i686)
+            arch="386"
+            ;;
+        *)
+            echo "❌ 不支持的 CPU 架构: $(uname -m)"
+            return 1
+            ;;
+    esac
+    
+    echo "📦 检测系统：$os, 架构：$arch"
+    
+    # 构建下载 URL
+    local download_url
+    download_url="https://github.com/go-gost/gost/releases/download/${latest_version}/gost_${latest_version#v}_${os}_${arch}.tar.gz"
+    
+    echo "📥 下载 GOST (${download_url})..."
+    
+    # 下载文件
+    if ! curl -fsSL -o /tmp/gost.tar.gz "$download_url"; then
+        echo "❌ 下载失败，请检查网络连接或系统架构是否支持"
+        return 1
+    fi
+    
+    echo "📦 解压文件..."
+    
+    # 解压文件
+    if ! tar -xzf /tmp/gost.tar.gz -C /tmp gost 2>/dev/null; then
+        echo "❌ 解压失败"
+        rm -f /tmp/gost.tar.gz
+        return 1
+    fi
+    
+    # 移动到安装目录
+    if ! mv /tmp/gost "$GOST_BIN"; then
+        echo "❌ 无法安装到 $GOST_BIN"
+        rm -f /tmp/gost.tar.gz
+        return 1
+    fi
+    
+    chmod +x "$GOST_BIN"
+    rm -f /tmp/gost.tar.gz
+    
+    echo "✅ GOST 安装成功：$GOST_BIN"
+    return 0
+}
+
 # ========== 主程序 ========== 
 
 # 1. Root 权限检查
 if [[ $EUID -ne 0 ]]; then
-  echo "❌ 错误: 此脚本需要 root 权限，请使用 sudo 或 root 账号运行。"
+  echo "❌ 错误: 此脚本需要 root 权限，请使�� sudo 或 root 账号运行。"
   exit 1
 fi
 
@@ -138,10 +213,11 @@ fi
 
 # ========== 安装 GOST ========== 
 if [[ "$CHOICE" == "1" ]]; then
-  echo "👉 开始安装 GOST..."
+  echo "👉 ���始安装 GOST..."
   
-  if ! bash <(curl -fsSL --connect-timeout 15 https://github.com/go-gost/gost/raw/master/install.sh); then
-    echo "❌ 安装脚本下载或执行失败，请检查网络连接。"
+  # 使用新的可靠安装方法
+  if ! install_gost_from_github; then
+    echo "❌ GOST 安装失败"
     exit 1
   fi
 
@@ -149,7 +225,6 @@ if [[ "$CHOICE" == "1" ]]; then
     echo "❌ GOST 未能成功安装到 $GOST_BIN，请重试。"
     exit 1
   fi
-  echo "✅ GOST 安装成功：$GOST_BIN"
 
   # 检查目录权限
   if ! check_dir_permissions "$CONFIG_DIR"; then
@@ -213,7 +288,7 @@ EOF
   systemctl enable "$SERVICE_NAME"
   systemctl restart "$SERVICE_NAME"
 
-  # 检查服务���康
+  # 检查服务健康
   if ! check_service_health "$SERVICE_NAME"; then
     exit 1
   fi
@@ -223,7 +298,7 @@ EOF
   echo "查看状态命令： systemctl status ${SERVICE_NAME}"
 
   echo
-  echo "🧹 清理安装残留文件..."
+  echo "��� 清理安装残留文件..."
   for file in LICENSE README.md README_en.md; do
     [[ -f "$PWD/$file" ]] && rm -f "$PWD/$file" && echo "🗑️ 删除 $PWD/$file"
   done
