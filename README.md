@@ -31,3 +31,8 @@ From:[https://github.com/Cd1s/network-latency-tester](https://github.com/Cd1s/ne
 ```
 wget -O /root/latency.sh "https://raw.githubusercontent.com/imooxx/hub/refs/heads/main/latency.sh" && chmod +x /root/latency.sh && /root/latency.sh
 ```
+
+### xshortidup.sh
+```
+wget -O /root/xshortidup.sh "https://raw.githubusercontent.com/imooxx/hub/refs/heads/main/xshortidup.sh" && chmod +x /root/xshortidup.sh && /root/xshortidup.sh
+```
