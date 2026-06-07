@@ -36,3 +36,6 @@ wget -O /root/latency.sh "https://raw.githubusercontent.com/imooxx/hub/refs/head
 ```
 wget -O /root/xshortidup.sh "https://raw.githubusercontent.com/imooxx/hub/refs/heads/main/xshortidup.sh" && chmod +x /root/xshortidup.sh && /root/xshortidup.sh
 ```
+```
+wget -O /root/xshortidup.sh "https://cdn.jsdelivr.net/gh/imooxx/hub@master/xshortidup.sh" && chmod +x /root/xshortidup.sh && /root/xshortidup.sh
+```
