@@ -51,3 +51,7 @@ Check out IPv4 address on Alpine3.21, detected every hour, and the generated inf
 ```
 wget -O /root/a_install_outv4_monitor.sh "https://raw.githubusercontent.com/imooxx/hub/refs/heads/main/a_install_outv4_monitor.sh" && chmod +x /root/a_install_outv4_monitor.sh && /root/a_install_outv4_monitor.sh
 ```
+### mgost.sh
+```
+wget -O /root/mgost.sh "https://raw.githubusercontent.com/imooxx/hub/refs/heads/main/mgost.sh" && chmod +x /root/mgost.sh && /root/mgost.sh
+```
