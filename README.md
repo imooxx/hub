@@ -55,3 +55,8 @@ wget -O /root/a_install_outv4_monitor.sh "https://raw.githubusercontent.com/imoo
 ```
 wget -O /root/mgost.sh "https://raw.githubusercontent.com/imooxx/hub/refs/heads/main/mgost.sh" && chmod +x /root/mgost.sh && /root/mgost.sh
 ```
+
+### amgost.sh for Alpine3.23
+```
+wget -O /root/amgost.sh "https://raw.githubusercontent.com/imooxx/hub/refs/heads/main/amgost.sh" && chmod +x /root/amgost.sh && /root/amgost.sh
+```
